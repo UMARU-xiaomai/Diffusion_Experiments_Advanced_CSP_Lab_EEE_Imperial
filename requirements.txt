@@ -1,0 +1,7 @@
+numpy
+Pillow
+matplotlib
+seaborn
+imageio
+torch
+torchvision

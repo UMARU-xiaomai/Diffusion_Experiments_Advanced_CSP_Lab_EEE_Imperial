@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+pokemon/
+Practical_Project_Example_Solution.ipynb
+figures/

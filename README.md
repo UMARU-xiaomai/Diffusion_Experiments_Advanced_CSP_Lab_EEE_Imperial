@@ -1,91 +1,160 @@
-# Pokemon Diffusion
+# Pokemon Diffusion: DDPM Implementation Lab
 
-Repository for the experimental project of the CSP group at Imperial College London.
+![Forward diffusion warm-up image grid](forward_grid.png)
 
-We use the dataset from [pokemon-ga by Zhenye Na](https://github.com/Zhenye-Na/pokemon-gan).
+This repository contains the notebook for the 2026–2027 Advanced Communications and Signal Processing Laboratory @ Imperial College London. The exercise guides students through an end-to-end denoising diffusion probabilistic model (DDPM) for unconditional Pokemon image generation. The main exercise is in [Practical_Project.ipynb](Practical_Project.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/guyuxuan9/Diffusion_Experiments_Advanced_CSP_Lab_EEE_Imperial/blob/main/Practical_Project.ipynb).
 
-See `Practical_Project.ipynb` further information. 
+## Exercise overview
 
+You will implement and evaluate the main components of a DDPM:
 
+1. Construct a linear variance schedule.
+2. Sample a noisy state directly from a clean image using closed-form forward process.
+3. Train a time-conditioned network to predict the added noise.
+4. Implement one reverse diffusion transition.
+5. Generate and visualize a complete reverse trajectory.
+6. Design and evaluate an improved denoising architecture.
 
-## Rules ⚖️ 
+## Logistics
 
-### Formalities 📝 
+- Work in pairs. If needed, a group of three students will be created.
+- Submit your results through Canvas.
+- Plagiarism is not allowed and may lead to serious consequences. You may discuss approaches with classmates and take inspiration from open-source implementations.
+- Small copied code snippets are allowed when their sources are clearly referenced.
+- Python and PyTorch are recommended.
+- Your code should run on Google Colab and a normal desktop computer with minimal setup effort.
 
-* The goal is to implement an end-to-end diffusion model on the Pokemon dataset.
-* You work alone or in groups of two.
-* Plagiarism will get you expelled from the experiment and potentially exmatriculated. However, you can discuss solutions with your fellow students and take inspiration from open-source implementations (see references). 
-* You can also copy&pase small code snippets if they are clearly indicated.
-* We recommend Python + PyTorch for the implementation. If you want to use something else, please reach out to us. 
-* Your code should run on Google Colab and normal desktop computers with minimal setup effort.
-* We will invite each team to explain their code in an individual meeting. You (resp. both of you) should be able to explain the code in detail and justify design choices.
-* Submit your results via e-mail to Yirong.
+## Setup
 
-### How to Pass 🎓
+Open `Practical_Project.ipynb` in Jupyter or Google Colab and run the cells in order. A GPU is recommended for training but is not required for the initial implementation and checks.
 
-* To pass, you need to provide a (in a reasonable sense) technically correct implementation of a forward and backward process. You will not be judged on the visual quality of the generated images.
-* In addition, you should generate animations (e.g., gifs) of the forward and backward process to illustrate what is going on during training and data generation (cf. *one_step_forward()* function).
-* Comment your code extensively and assign proper names to your functions, variables, and classes. 
-* Set seeds to make your code deterministic and save the final weights. 
-* You should also visually verify that the forward process ends in a standard normal distribution by providing a reasonable visualization (analogously to *color_distribution_original_images.png*).
-* We recommend following the denoising diffusion paradigm. When you want to use score-based or SDE methods, you can do so as well. 
-* If you make very unconventional design choices, you will need to be able to justify them. 
-* Do you see any problems with your implementations or room to improve? Explain in a short paragraph (can be part of the notebook). 
-* You can use this notebook or use your code from scratch. 
+For a local Jupyter environment, install the dependencies with:
 
-### Notes on the Reference Implementation 💻 
+```bash
+python -m pip install -r requirements.txt
+```
 
-* You will probably need to activate the GPU of Colab and use batched images when you want to be able to generate nice images (for passing, this is not necessary, though)
-* We use a simple linear schedular and batch size of 256. 
-* We predict the original image and not the noise. 
-* We use a Unet, inspired by _The Annotated Diffusion Model_.
-* We run at least for 1000 epochs.
-* The visual quality strongly depends on the complexity of the Unet. Do not worry if your generated images look more like blobs than actual Pokomen. For passing, a minimal Unet or Autoencoder is enough. 
-* Of course, you can always test other (larger) datasets to play around with.
+The notebook uses the following Python packages:
 
-### Bonus 🏆
+```text
+numpy
+Pillow
+matplotlib
+seaborn
+imageio
+torch
+torchvision
+```
 
-For a bonus, you can extend the implementation in any creative way. Possibilities include:
-* Smart data augmentation, extending the data set, or pre-training
-* Conditioning (e.g. on the Naruto *type*)
-* Testing different network architectures, schedulers, or time-embeddings and reporting the findings.
-* Using a latent diffusion approach instead of diffusion in the RGB/image space.
+## Assessed implementation tasks
 
-If you have any other idea you think is worth investigating: try it out!
+Cells marked `TODO` contain the assessed work:
 
+- **TODO 1-2:** Implement closed-form forward diffusion in `q_sample`.
+- **TODO 3-5:** Sample training timesteps, create noisy inputs, predict noise, and compute the mean-squared-error loss.
+- **TODO 6-7:** Implement the DDPM reverse-process mean and stochastic reverse update.
+- **TODO 8-9:** Implement an improved time-conditioned denoiser with at least two meaningful architectural changes.
 
-### References 📚
-Preliminaries 💡 
-* [10 tricks for a better Google Colab experience](https://towardsdatascience.com/10-tips-for-a-better-google-colab-experience-33f8fe721b82)
-* [Youtube: Deep Learning With PyTorch - Full Course (in case you need some PyTorch refreshments)](https://www.youtube.com/watch?v=c36lUUr864M&ab_channel=PatrickLoeber)
-* [UvA PyTorch Tutorial](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial2/Introduction_to_PyTorch.html)
-* [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://link.springer.com/content/pdf/10.1007/978-3-319-24574-4_28.pdf)
+The cosine schedule is an optional extension.
 
-Diffusion 🧨
-* [What are Diffusion Models?](https://www.youtube.com/watch?v=fbLgFrlTnGU)
-* [Tiny Diffusion Repo by tanelp (minimal example of a 2D diffusion)](https://github.com/tanelp/tiny-diffusion)
-* [Youtube: Diffusion models from scratch in PyTorch](https://www.youtube.com/watch?v=a4Yfz2FxXiY&t=644s)
-* [Youtube: Diffusion Models | PyTorch Implementation](https://www.youtube.com/watch?v=TBCRlnwJtZU&ab_channel=Outlier)
-* [The Annotated Diffusion Model](https://huggingface.co/blog/annotated-diffusion)
-* [Diffusion models explained in 4-difficulty levels](https://www.youtube.com/watch?v=yTAMrHVG1ew)
-* [How AI Image Generators Work (Stable Diffusion / Dall-E) - Computerphile](https://www.youtube.com/watch?v=1CIpzeNxIhU)
+Training is deliberately opt-in. Complete and test the forward process and loss before changing:
 
+```python
+RUN_TRAINING = False
+```
 
+to `True`. The starter configuration uses 20 training epochs so that the complete pipeline can be tested before running longer experiments.
 
-Pokemon 🐲
-* [Pokemon Images Dataset on Kaggle](https://www.kaggle.com/datasets/kvpratama/pokemon-images-dataset)
-* [PokeGAN: Generating Fake Pokemon with a Generative Adversarial Network](https://blog.jovian.com/pokegan-generating-fake-pokemon-with-a-generative-adversarial-network-f540db81548d)
-* [pokemon-ga by Zhenye Na (contains the dataset we are using)](https://github.com/Zhenye-Na/pokemon-gan)
+## Requirements for completion
 
+To complete the exercise:
 
+- Implement technically correct forward and reverse diffusion processes.
+- Run the supplied shape and finite-value checks.
+- Train the noise-prediction model and save the final checkpoint.
+- Create animations of the forward and reverse processes.
+- Show that the terminal forward distribution approaches a standard Gaussian distribution.
+- Implement at least two meaningful improvements to `TinyDenoiser`.
+- In the formal report, draw an architectural diagram showing data flow, time conditioning, resolution changes, skip connections, and main tensor shapes.
+- Compare the baseline and improved models using parameter counts, training-loss curves, and equally sized generated-image grids under the same sampling settings.
+- Answer all six questions at the end of the notebook.
+- Use clear variable names, comments, and fixed random seeds.
 
-## Files 📁
-* `color_distribution_original_images.png`: RGB value disribution of the trainings data
-* `dataset_summary.png`: Some (augmented) images from the trainings data
-* `forward_animate.gif`: Animation of an (incorrect) forward process. 
-* `forward_grid.png`: Imagegrid of an (incorrect) forward process. 
-* `reverse_process_reference_epoch_X.gif`: Examples of the reverse process of the reference implementation after X epochs
-* `color_distribution_normal_reference.png`: RGB value disribution of the trainings _after_ the forward process
+For a fair architecture comparison, keep the dataset, diffusion schedule, optimizer, number of training updates, random seed, and sampling procedure fixed.
 
+## Generated files
 
-<img src="https://github.com/gerritgr/pokemon_diffusion/raw/main/reverse_process_reference_epoch_002000.png" alt="Dataset Summary" width="90%">
+Running the starter cells creates or overwrites these exploratory files:
+
+| File | Contents |
+| --- | --- |
+| `dataset_summary.png` | Original and augmented dataset examples |
+| `color_distribution_original_images.png` | RGB-value distributions before diffusion |
+| `forward_animate.gif` | Animation of the intentionally incorrect warm-up process |
+| `forward_grid.png` | Image grid from the intentionally incorrect warm-up process |
+
+After the corresponding TODOs are complete and the visualization calls are enabled, the DDPM section uses these filenames:
+
+| File | Contents |
+| --- | --- |
+| `forward_process_student.png` | Forward diffusion trajectory |
+| `forward_process_student.gif` | Forward diffusion animation |
+| `pokemon_ddpm_student.pt` | Model state, optimizer state, loss history, and diffusion-step configuration |
+| `reverse_process_student.png` | Reverse diffusion trajectory |
+| `reverse_process_student.gif` | Reverse diffusion animation |
+
+## Suggested submission checklist
+
+- Completed `Practical_Project.ipynb`, including outputs and written answers
+- Final model checkpoint
+- Forward-process image and GIF
+- Reverse-process image and GIF
+- Terminal channel-distribution plot
+- Improved-model architecture diagram
+- Baseline-versus-improved loss comparison
+- Baseline-versus-improved generated-image comparison
+
+## Passing criteria
+
+Image quality is not the main grading criterion. A passing submission should demonstrate a technically correct forward and reverse process, reproducible execution, saved model weights, forward and reverse animations, and evidence that the terminal forward distribution approaches a standard Gaussian distribution.
+
+## Bonus directions
+
+Possible extensions include:
+
+- Conditioning generation on a Pokemon label or type, such as Fire
+- Replacing the linear variance schedule with a cosine schedule
+- Exploring stronger time embeddings or attention-based denoiser
+- Using latent diffusion instead of diffusion in RGB image space
+
+## Acknowledgements
+
+This repository is adapted from:
+
+- [diffusion_experiments_imperial_college_london](https://github.com/EliGE6922/diffusion_experiments_imperial_college_london)
+- [pokemon_diffusion](https://github.com/gerritgr/pokemon_diffusion)
+
+## References
+
+### Preliminaries
+
+- [10 tricks for a better Google Colab experience](https://towardsdatascience.com/10-tips-for-a-better-google-colab-experience-33f8fe721b82)
+- [Deep Learning With PyTorch, full course](https://www.youtube.com/watch?v=c36lUUr864M&ab_channel=PatrickLoeber)
+- [UvA PyTorch tutorial](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial2/Introduction_to_PyTorch.html)
+- [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://link.springer.com/content/pdf/10.1007/978-3-319-24574-4_28.pdf)
+
+### Diffusion models
+
+- [What are Diffusion Models?](https://www.youtube.com/watch?v=fbLgFrlTnGU)
+- [Tiny Diffusion](https://github.com/tanelp/tiny-diffusion)
+- [Diffusion models from scratch in PyTorch](https://www.youtube.com/watch?v=a4Yfz2FxXiY&t=644s)
+- [Diffusion Models: PyTorch Implementation](https://www.youtube.com/watch?v=TBCRlnwJtZU&ab_channel=Outlier)
+- [The Annotated Diffusion Model](https://huggingface.co/blog/annotated-diffusion)
+- [Diffusion models explained at four levels](https://www.youtube.com/watch?v=yTAMrHVG1ew)
+- [How AI Image Generators Work](https://www.youtube.com/watch?v=1CIpzeNxIhU)
+
+### Pokemon data and generation
+
+- [Pokemon Images Dataset on Kaggle](https://www.kaggle.com/datasets/kvpratama/pokemon-images-dataset)
+- [PokeGAN](https://blog.jovian.com/pokegan-generating-fake-pokemon-with-a-generative-adversarial-network-f540db81548d)
+- [pokemon-ga](https://github.com/Zhenye-Na/pokemon-gan)
